@@ -14,7 +14,7 @@ def main():
     pwords = load_wordlist("positive.txt")
     nwords = load_wordlist("negative.txt")
     counts = stream(ssc, pwords, nwords, 100)
-    #print(counts)
+    print(counts)
     make_plot(counts)
 
 
@@ -39,10 +39,7 @@ def load_wordlist(filename):
     """ 
     This function should return a list or set of words from the given filename.
     """
-    word_list = []
-    with open(filename) as f:
-    	line = f.read().split()
-    	word_list.append(line)
+    word_list = set(line.strip() for line in open(filename,"r"))
     return word_list
 
 def updateFunction(newValues, runningCount):
@@ -62,8 +59,8 @@ def stream(ssc, pwords, nwords, duration):
     # YOUR CODE HERE
     
     words = tweets.flatMap(lambda line: line.split(" "))
-    words = words.filter(lambda x: x in pwords[0] or x in nwords[0])
-    pos_neg_words = words.map(lambda x: ("Positive",1) if x in pwords[0] else ("Negetive",1))
+    words = words.filter(lambda x: x in pwords or x in nwords)
+    pos_neg_words = words.map(lambda x: ("Positive",1) if x in pwords else ("Negetive",1))
     #pos_neg_words.pprint()
     
     count_pos_neg_words = pos_neg_words.reduceByKey(lambda x,y: x+y)
